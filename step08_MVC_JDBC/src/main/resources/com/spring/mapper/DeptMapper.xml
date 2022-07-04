@@ -1,0 +1,87 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.mapper.DeptMapper">
+	<select id="getDeptNameByDeptno" parameterType="_int" resultType="string">
+		SELECT dname from dept where deptno=#{deptno}<!-- SELECT태그 사이에는 실제로 실행할 SQL쿼리문을 넣어 준다. -->
+	</select>
+	
+	<select id="getDeptByDeptno" resultMap="getDeptByDeptnoResultMap">
+		select deptno, dname, loc from dept where deptno = #{deptno}<!-- SELECT태그 사이에는 실제로 실행할 SQL쿼리문을 넣어 준다. -->
+	</select>
+	<resultMap type="com.spring.dto.Dept" id="getDeptByDeptnoResultMap" >
+		<result column="deptno" property="deptno"/> <!-- colum은 데이터베이스의 컬럼네임, property는 우리가 정의한 데이터 명 -->
+		<result column="dname" property="dname"/>
+		<result column="loc" property="loc"/>	
+	</resultMap>
+	
+	<select id="getDeptMap" resultType="java.util.HashMap"> <!-- id값에는 TimeMapper.java 파일안에서 실제 실행할 함수 이름을 적으면 된고, resultType은 해당함수의 반환형을 적으면 된다 -->
+		select deptno, dname, loc from dept where deptno = #{deptno}
+	</select>
+	
+	<select id="getAllDepts" resultType="com.spring.dto.Dept">
+		select deptno, dname, loc from dept
+	</select>
+	
+	<select id="getAllDeptsMap" resultType="hashmap">
+		select deptno, dname, loc from dept
+	</select>
+	
+<!-- Mybatis에서 특수기호 사용하기 -->
+<!-- SELECT dname FROM DEPT WHERE deptno <![CDATA[>]]> 10 -->
+	
+	
+	<!-- 다이나믹(동적 쿼리 사이트 : https://mybatis.org/mybatis-3/dynamic-sql.html -->
+<!--<insert id="insertDept" parameterType="com.spring.dto.Dept">
+		insert into dept(DEPTNO,DNAME,LOC) values(#{deptno},#{dname},#{loc})
+	</insert> -->
+	<!-- trim을 활용한 문자열 자동 지정 -->
+	<insert id="insertDept" parameterType="com.spring.dto.Dept">
+		insert into dept(DEPTNO,DNAME,LOC) values
+		<trim prefix="(" suffix=")">
+			#{deptno},#{dname},#{loc}
+		</trim>		
+	</insert>
+	
+	
+	
+		<!-- <select id="getdata" resultType="com.spring.dto.Dept">
+			select dname where deptno in(10,20,30)
+		</select> -->
+		<!-- for문을 활용한 select -->
+	<!-- 	<select id="getdata" resultType="com.spring.dto.Dept">
+		select dname where deptno in
+			<foreach collection="data" item="deptno" open="(" close=")" separator=","> collection은 넘겨온 객체에 대한 것이 들어가면된다. 
+				#{deptno}
+			</foreach>
+		</select> -->
+	
+	
+	
+	
+	<!-- 정적 쿼리 작성 예시 -->
+<!--<update id="updateDept" parameterType="com.spring.dto.Dept">
+		update dept set loc='moon' where deptno=#{deptno} and dname=#{dname};
+	</update> -->
+	
+	<!-- 동적 쿼리 작성 예시 -->
+	<update id="updateDept" parameterType="com.spring.dto.Dept">
+		update dept set loc='moon' where 
+		<if test="dname != null and dname != ''">
+			dname=#{dname} and
+		</if>
+		<choose>
+			<when test="deptno != null"> deptno=#{deptno}</when>
+		</choose>
+	</update>
+	<!-- 리액트  서버 예시 update -->
+	<update id="UpdateDeptReact" parameterType="com.spring.dto.Dept">
+		update dept set dname=#{dname}, loc=#{loc} where deptno=#{deptno};
+	</update>
+	
+ <!-- 리액트 서버 예시 delet -->
+	<delete id="deleteDept" parameterType="com.spring.dto.Dept">
+		delete from dept where deptno=#{deptno};
+	</delete>
+	
+</mapper>

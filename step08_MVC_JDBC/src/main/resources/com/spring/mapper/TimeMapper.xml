@@ -1,0 +1,8 @@
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.mapper.TimeMapper">
+	<select id="getTime2" resultType="string"> <!-- id값에는 TimeMapper.java 파일안에서 실제 실행할 함수 이름을 적으면 된고, resultType은 해당함수의 반환형을 적으면 된다 -->
+		SELECT NOW() <!-- SELECT태그 사이에는 실제로 실행할 SQL쿼리문을 넣어 준다. -->
+	</select>
+</mapper>
